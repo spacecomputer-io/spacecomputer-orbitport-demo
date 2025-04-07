@@ -11,7 +11,7 @@ export default function PlanetGrid({ planets, isLaunching }: PlanetGridProps) {
   return (
     <motion.div
       key="planet-grid"
-      className="flex items-center justify-center gap-8"
+      className="flex items-center justify-center gap-4 lg:gap-8"
     >
       {planets.map((planet, index) => (
         <motion.div
@@ -22,6 +22,7 @@ export default function PlanetGrid({ planets, isLaunching }: PlanetGridProps) {
             filter: isLaunching ? "blur(0px)" : "blur(4px)",
           }}
           transition={{ duration: 0.5 }}
+          className="relative p-1"
         >
           <Image
             src={planet.image}
