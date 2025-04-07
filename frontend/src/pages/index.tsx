@@ -4,6 +4,7 @@ import { Planet, generatePlanets } from "@/types/planet";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useOrbitport } from "@/hooks/useOrbitport";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -12,16 +13,28 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+interface RandomSeedResponse {
+  value: string;
+  sig: string;
+  src: string;
+}
+
+// Helper to convert hex string to Uint8Array
+const hexStringToUint8Array = (hexString: string): Uint8Array => {
+  const pairs = hexString.match(/[\dA-F]{2}/gi) || [];
+  return new Uint8Array(pairs.map((s) => parseInt(s, 16)));
+};
+
 export default function Home() {
   const [isLaunching, setIsLaunching] = useState(false);
   const [selectedPlanet, setSelectedPlanet] = useState<Planet | null>(null);
-  const [randomSeed, setRandomSeed] = useState<Uint8Array | null>(null);
+  const [randomSeed, setRandomSeed] = useState<string | null>(null);
   const [planets, setPlanets] = useState<Planet[]>([]);
   const { getRandomSeed } = useOrbitport();
 
   // Generate initial blurred planets
   useEffect(() => {
-    const dummyBytes = new Uint8Array(32);
+    const dummyBytes = new Uint8Array(32).fill(1); // Fill with 1s for consistent initial state
     const initialPlanets = generatePlanets(dummyBytes);
     setPlanets(initialPlanets.slice(0, 5));
   }, []);
@@ -29,10 +42,18 @@ export default function Home() {
   const handleLaunch = async () => {
     if (isLaunching) return;
     setIsLaunching(true);
+    setSelectedPlanet(null); // Reset selected planet
 
     try {
-      const bytes = await getRandomSeed();
-      setRandomSeed(bytes);
+      toast.loading("Retrieving cosmic random seed...");
+      const response = (await getRandomSeed()) as RandomSeedResponse;
+      toast.dismiss();
+
+      // Store the hex string
+      setRandomSeed(response.value);
+
+      // Convert hex string to bytes
+      const bytes = hexStringToUint8Array(response.value);
       const newPlanets = generatePlanets(bytes);
 
       // Start roulette animation
@@ -50,9 +71,12 @@ export default function Home() {
         const selectedPlanet = newPlanets[bytes[0] % 100];
         setSelectedPlanet(selectedPlanet);
         setPlanets(newPlanets.slice(0, 5));
+        setIsLaunching(false);
       }, 2000);
     } catch (error) {
       console.error("Launch failed:", error);
+      toast.error("Failed to retrieve random seed");
+      setIsLaunching(false);
     }
   };
 
@@ -79,71 +103,74 @@ export default function Home() {
         {/* Planets Display */}
         <div className="relative w-full h-[400px] flex items-center justify-center mb-8">
           <AnimatePresence>
-            {planets.map((planet, index) => (
-              <motion.div
-                key={`${planet.id}-${index}`}
-                className={`absolute ${index === 2 ? "z-10" : "z-0"}`}
-                initial={{ x: 0 }}
-                animate={{
-                  x: (index - 2) * 150,
-                  scale: index === 2 ? 1.5 : 1,
-                  filter: isLaunching ? "blur(0px)" : "blur(4px)",
-                }}
-                transition={{ duration: 0.5 }}
-              >
-                <Image
-                  src={planet.image}
-                  alt={planet.name}
-                  width={100}
-                  height={100}
-                  className="rounded-full"
-                />
-              </motion.div>
-            ))}
+            {!selectedPlanet &&
+              planets.map((planet, index) => (
+                <motion.div
+                  key={`${planet.id}-${index}`}
+                  className={`absolute ${index === 2 ? "z-10" : "z-0"}`}
+                  initial={{ x: 0 }}
+                  animate={{
+                    x: (index - 2) * 150,
+                    scale: index === 2 ? 1.5 : 1,
+                    filter: isLaunching ? "blur(0px)" : "blur(4px)",
+                  }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Image
+                    src={planet.image}
+                    alt={planet.name}
+                    width={100}
+                    height={100}
+                    className="rounded-full"
+                  />
+                </motion.div>
+              ))}
           </AnimatePresence>
 
           {/* Selected Planet Overlay */}
           {selectedPlanet && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center"
-              >
-                <p className="text-lg mb-2">You&apos;ve discovered</p>
-                <h2 className="text-3xl font-bold mb-4">
-                  {selectedPlanet.name}
-                </h2>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button className="px-4 py-2 bg-white/10 rounded-md hover:bg-white/20 transition-colors">
-                      View Random Seed
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Random Seed Details</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <p>
-                        This planet was discovered using true random data from
-                        satellites in orbit.
-                      </p>
-                      <div className="bg-black/20 p-4 rounded-md font-mono text-sm">
-                        {randomSeed
-                          ? Array.from(randomSeed)
-                              .map((b) => b.toString(16).padStart(2, "0"))
-                              .join(" ")
-                          : "No seed available"}
-                      </div>
-                      <p className="text-sm opacity-80">
-                        Source: Orbitport cEDGE/Crypto2 Satellite Network
-                      </p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="absolute inset-0 flex flex-col items-center justify-center text-center"
+            >
+              <p className="text-lg mb-2 opacity-80">You&apos;ve discovered</p>
+              <h2 className="text-5xl font-bold mb-8 tracking-wider">
+                {selectedPlanet.name}
+              </h2>
+              <Image
+                src={selectedPlanet.image}
+                alt={selectedPlanet.name}
+                width={200}
+                height={200}
+                className="mb-8"
+                priority
+              />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="px-6 py-2 bg-white/10 rounded-md hover:bg-white/20 transition-colors border border-white/20">
+                    View Random Seed
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Random Seed Details</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <p>
+                      This planet was discovered using true random data from
+                      satellites in orbit.
+                    </p>
+                    <div className="bg-black/20 p-4 rounded-md font-mono text-sm break-all">
+                      {randomSeed || "No seed available"}
                     </div>
-                  </DialogContent>
-                </Dialog>
-              </motion.div>
-            </div>
+                    <p className="text-sm opacity-80">
+                      Source: Orbitport cEDGE/Crypto2 Satellite Network
+                    </p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </motion.div>
           )}
         </div>
 
