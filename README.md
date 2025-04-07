@@ -39,7 +39,8 @@ yarn install
 3. Create a `.env.local` file in the root directory with your Orbitport credentials:
 
 ```env
-OP_AUTH_URL=dev-1usujmbby8627ni8.us.auth0.com
+ORBITPORT_API_URL=https://dev-1usujmbby8627ni8.us.auth0.com
+ORBITPORT_AUTH_URL=https://op.spacecoin.xyz
 OP_CLIENT_ID=your-client-id
 OP_CLIENT_SECRET=your-client-secret
 ```
@@ -99,7 +100,7 @@ export async function GET() {
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
