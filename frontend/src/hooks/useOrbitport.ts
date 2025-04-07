@@ -7,6 +7,12 @@ interface TokenResponse {
   token_type: string;
 }
 
+interface RandomSeedResponse {
+  value: string;
+  sig: string;
+  src: string;
+}
+
 export function useOrbitport() {
   const { accessToken, setToken, isTokenValid } = useAuthStore();
 
@@ -31,7 +37,7 @@ export function useOrbitport() {
     }
   }, [accessToken, isTokenValid, setToken]);
 
-  const getRandomSeed = useCallback(async (): Promise<Uint8Array> => {
+  const getRandomSeed = useCallback(async (): Promise<RandomSeedResponse> => {
     const token = await getAccessToken();
 
     try {
@@ -46,7 +52,7 @@ export function useOrbitport() {
       }
 
       const data = await response.json();
-      return new Uint8Array(data.seed);
+      return data;
     } catch (error) {
       console.error("Error getting random seed:", error);
       throw error;
