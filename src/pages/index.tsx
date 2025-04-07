@@ -181,7 +181,7 @@ export default function Home() {
                       priority
                     />
                     <p
-                      className={`text-sm font-semibold mt-2 text-center ${
+                      className={`font-semibold mt-2 text-center ${
                         RARITY_COLORS[selectedPlanet.rarity]
                       }`}
                     >
