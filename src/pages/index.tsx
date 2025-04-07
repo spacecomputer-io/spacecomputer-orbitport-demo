@@ -230,22 +230,22 @@ export default function Home() {
         <div className="fixed bottom-0 left-0 right-0 flex justify-center">
           <div className="relative w-full max-w-2xl">
             <img src="/console.png" alt="Control Console" className="w-full" />
-            {/* Desktop Launch Area (invisible button) */}
-            <div
-              className="absolute hidden md:block top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                        w-[200px] h-[60px] cursor-pointer"
-              onClick={!isLaunching ? handleLaunch : undefined}
-              style={{ opacity: isLaunching ? 0.5 : 1 }}
-            />
-            {/* Mobile Launch Button */}
+            {/* Desktop Launch Area */}
             <button
+              className="absolute top-[27.8%] left-[37.2%] w-[190px] h-[84px] cursor-pointer disabled:cursor-not-allowed transition-opacity group"
               onClick={handleLaunch}
               disabled={isLaunching}
-              className="md:hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                       text-2xl font-bold text-white px-8 py-3 rounded-md
-                       bg-[#C73314] disabled:opacity-50 transition-opacity"
             >
-              LAUNCH
+              <img
+                src="/button/button.png"
+                alt="Launch Button"
+                className="w-full h-full object-cover group-active:hidden"
+              />
+              <img
+                src="/button/button-pressed.png"
+                alt="Launch Button Pressed"
+                className="w-full h-full object-cover hidden group-active:block"
+              />
             </button>
           </div>
         </div>
