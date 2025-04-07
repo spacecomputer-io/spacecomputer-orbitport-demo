@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import { Planet, generatePlanets, RARITY_COLORS } from "@/types/planet";
+import { Planet, generatePlanets } from "@/types/planet";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { useOrbitport } from "@/hooks/useOrbitport";
 import { toast } from "sonner";
 import SelectedPlanet from "@/components/SelectedPlanet";
