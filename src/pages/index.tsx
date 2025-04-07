@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { Planet, generatePlanets, RARITY_COLORS } from "@/types/planet";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { useOrbitport } from "@/hooks/useOrbitport";
 import { toast } from "sonner";
 import {
@@ -12,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ColoredPlanetImage } from "@/components/colored-planet-image";
 
 interface RandomSeedResponse {
   value: string;
@@ -155,12 +155,12 @@ export default function Home() {
                       }}
                       transition={{ duration: 0.5 }}
                     >
-                      <Image
+                      <ColoredPlanetImage
                         src={planet.image}
                         alt={planet.name}
                         width={100}
                         height={100}
-                        className="rounded-full"
+                        color={planet.color}
                       />
                     </motion.div>
                   ))}
@@ -173,11 +173,12 @@ export default function Home() {
                   className="flex flex-col items-center"
                 >
                   <div className="relative">
-                    <Image
+                    <ColoredPlanetImage
                       src={selectedPlanet.image}
                       alt={selectedPlanet.name}
                       width={200}
                       height={200}
+                      color={selectedPlanet.color}
                       priority
                     />
                     <p
@@ -228,13 +229,7 @@ export default function Home() {
         {/* Console - Fixed at bottom */}
         <div className="fixed bottom-0 left-0 right-0 flex justify-center">
           <div className="relative w-full max-w-2xl">
-            <Image
-              src="/console.png"
-              alt="Control Console"
-              width={800}
-              height={300}
-              className="w-full"
-            />
+            <img src="/console.png" alt="Control Console" className="w-full" />
             {/* Desktop Launch Area (invisible button) */}
             <div
               className="absolute hidden md:block top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 

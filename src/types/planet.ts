@@ -55,9 +55,9 @@ const generatePlanetName = (id: number, randomBytes: Uint8Array): string => {
 // Helper to generate random HSL color
 const generateRandomColor = (randomBytes: Uint8Array): string => {
   // Use different bytes for different color components
-  const hue = (randomBytes[4] * 137.508) % 360; // Golden angle approximation
-  const saturation = 70 + (randomBytes[5] % 30); // 70-100%
-  const lightness = 40 + (randomBytes[6] % 20); // 40-60%
+  const hue = Math.floor((randomBytes[4] * 137.508) % 360); // Golden angle approximation
+  const saturation = Math.floor(70 + (randomBytes[5] % 30)); // 70-100%
+  const lightness = Math.floor(40 + (randomBytes[6] % 20)); // 40-60%
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 };
 
