@@ -6,6 +6,8 @@ import { useOrbitport } from "@/hooks/useOrbitport";
 import { toast } from "sonner";
 import SelectedPlanet from "@/components/SelectedPlanet";
 import PlanetGrid from "@/components/PlanetGrid";
+import { ChevronDown } from "lucide-react";
+import Image from "next/image";
 
 // Helper to convert hex string to Uint8Array
 const hexStringToUint8Array = (hexString: string): Uint8Array => {
@@ -140,23 +142,57 @@ export default function Home() {
         {/* Console */}
         <div className="fixed bottom-0 left-0 right-0 flex justify-center">
           <div className="relative w-full max-w-2xl">
-            <img src="/console.png" alt="Control Console" className="w-full" />
-            <button
-              className="absolute top-[27.8%] left-[37%] w-[28.5%] aspect-[458/201] cursor-pointer disabled:cursor-not-allowed transition-opacity group"
-              onClick={handleLaunch}
-              disabled={isLaunching}
-            >
-              <img
-                src="/button/button.png"
-                alt="Launch Button"
-                className="w-full h-full object-cover group-active:hidden"
-              />
-              <img
-                src="/button/button-pressed.png"
-                alt="Launch Button Pressed"
-                className="w-full h-full object-cover hidden group-active:block"
-              />
-            </button>
+            <Image
+              src="/console.png"
+              alt="Control Console"
+              width={1200}
+              height={600}
+              className="w-full"
+              priority
+            />
+            <div className="absolute top-[27.8%] left-[37%] w-[28.5%] aspect-[458/201]">
+              <button
+                className="absolute inset-0 cursor-pointer disabled:cursor-not-allowed transition-all duration-500 group"
+                onClick={handleLaunch}
+                disabled={isLaunching}
+              >
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/button/button.png"
+                    alt="Launch Button"
+                    fill
+                    className="object-cover group-active:hidden"
+                    priority
+                  />
+                  <Image
+                    src="/button/button-pressed.png"
+                    alt="Launch Button Pressed"
+                    fill
+                    className="object-cover hidden group-active:block"
+                    priority
+                  />
+                </div>
+              </button>
+
+              {/* Floating Caret */}
+              <AnimatePresence>
+                {!selectedPlanet && !isLaunching && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: -10 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                    }}
+                    className="absolute top-0 left-1/2 -translate-x-1/2"
+                  >
+                    <ChevronDown className="w-6 h-6 text-white/80" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </main>
