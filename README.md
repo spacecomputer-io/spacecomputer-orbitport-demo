@@ -1,87 +1,107 @@
-# Spacecoin Orbitport Integration Demo
+# Cosmic Wayfinder - Spacecoin Orbitport Integration Demo
 
-## 🌌 Project Title: **Cosmic Launch Lottery — Orbitport Integration Demo**
+A cosmic-themed lottery application that demonstrates the use of Orbitport's cTRNG (cosmic True Random Number Generator) API. Users can "launch" to discover random planets, with each planet's selection powered by true cosmic randomness from satellites in orbit.
 
-### 🎯 Objective:
+![Demo Screenshot](./public/demo.png)
 
-Build a web2 client-side application that demonstrates the use of **Orbitport’s `cTRNG` cosmic randomness API** by letting users participate in a space-themed lottery where they "launch" to a random planet. The experience will feel cosmic, interactive, and lay the foundation for future extensions like trait generation and NFTs.
+## 🌌 Features
 
----
+- Interactive cosmic interface with animated planet discovery
+- True random number generation powered by Orbitport's cTRNG
+- Planet rarity system (Common, Rare, Legendary)
+- Responsive design for both desktop and mobile
+- Smooth animations and transitions
 
-## 🚀 Phase 1: **Cosmic Launch Lottery MVP (Orbitport Integration)**
+## 🚀 Getting Started
 
-### ✨ User Flow:
+### Prerequisites
 
-1. User visits the site and sees a cosmic-themed interface with a spaceship and a “Launch” button.
-2. On clicking "Launch," a request is made (via backend proxy) to Orbitport's `cTRNG` endpoint to fetch a true random number.
-3. The number determines the planet the spaceship "lands" on.
-4. The planet is revealed with its name and rarity.
-5. A short animation (e.g. rocket launch or zoom through stars) enhances immersion.
-6. Add an "About" section explaining that the number is sourced from **real satellites in orbit** (cEDGE/Crypto2).
+- Node.js 20+ and npm/yarn/pnpm
+- Orbitport API credentials (client ID and secret)
 
-### 🔧 Tech Stack (Easily spun up & reproducable):
+### Installation
 
-- **Frontend**: NextJS + TailwindCSS
-- **Backend**: Next.js API route (to proxy Orbitport API & hide keys)
-- **Randomness Source**: Orbitport's `cTRNG` API
-- **Deployment**: Vercel
+1. Clone the repository:
 
-### 📊 Planet Mapping:
+```bash
+git clone https://github.com/easonchai/spacecoin-orbitport.git
+cd spacecoin-orbitport
+```
 
-- 100 pre-defined planets (Planet #1 to Planet #100)
-- Each has:
-  - Name (e.g. “Xylon-8”)
-  - Rarity tier: Common, Rare, Legendary
-  - Image/icon
-  - Optional lore/flavor text
+2. Install dependencies:
 
-### 🎨 Visual Design:
+```bash
+npm install
+# or
+yarn install
+```
 
-- Starry galaxy background
-- Neon glowing buttons
-- Planet artwork (use placeholder assets or generated ones)
-- Mini animations
+3. Create a `.env.local` file in the root directory with your Orbitport credentials:
 
----
+```env
+OP_AUTH_URL=dev-1usujmbby8627ni8.us.auth0.com
+OP_CLIENT_ID=your-client-id
+OP_CLIENT_SECRET=your-client-secret
+```
 
-## 🧪 Phase 2 (Optional Extension): **Cosmic Trait Generation**
+4. Start the development server:
 
-- Use additional random bits to generate planet traits:
-  - Color
-  - Ring system
-  - Number of moons
-  - Surface
-  - Size (Gravity)
-- Visuals update dynamically based on these traits
-- Traits saved locally, but demonstrates further use case of `cTRNG`
+```bash
+npm run dev
+# or
+yarn dev
+```
 
----
+The application will be available at `http://localhost:3000`.
 
-## 🪙 Phase 3 (Stretch Goal): **Mint to NFT**
+## 🔧 Technical Implementation
 
-- After landing on a planet, user can “claim” it
-- Mint metadata = planet ID + traits
-- Integrate a simple wallet flow (e.g. MetaMask or AA like Thirdweb)
-- Testnet of choice
+### Cosmic Randomness Integration
 
----
+The application uses Orbitport's cTRNG API to generate true random numbers from space-based sources:
 
-## 🗓️ Timeline
+1. **Randomness Source**:
 
-| Day       | Task                                                                         |
-| --------- | ---------------------------------------------------------------------------- |
-| **Day 1** | Finalize design, planet list, API contract, and backend proxy setup          |
-| **Day 2** | Implement backend + Orbitport API integration; test randomness fetching      |
-| **Day 3** | Build main UI: rocket launch button, loading animation, planet reveal screen |
-| **Day 4** | Hook up backend with frontend, test full flow                                |
-| **Day 5** | Polish animations, add lore text & UI styling                                |
-| **Day 6** | Optional additions (e.g. rarity coloring, share button, About section)       |
-| **Day 7** | Final deployment + written content                                           |
+   - Primary: `cosmic/aptos_orbital` - Space-based randomness from cEDGE/Crypto2 satellites
+   - Fallback: `local/cosmic_seed` - Derived from cosmic random seed
+   - Last resort: `local/go_crypto` - Local randomness (used in testing)
 
----
+2. **Implementation Flow**:
+   - User clicks the launch button
+   - Backend requests a random seed from Orbitport's API
+   - The seed is used to generate a planet ID (0-99)
+   - Planet details are randomized based on the cosmic randomness seed
+   - Results are displayed with animations
 
-## 📦 Deliverables (for this phase)
+### API Integration
 
-- Deployed web app with working launch & planet reveal
-- GitHub repo with README and setup instructions
-- Short written explanation on how cosmic randomness is used
+The application uses a Next.js API route to securely communicate with Orbitport's API:
+
+```typescript
+// Example API route implementation
+export async function GET() {
+  const token = await getOrbitportToken();
+  const response = await fetch("https://op.spacecoin.xyz/api/v1/rand_seed", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.json();
+}
+```
+
+## 🛠️ Built With
+
+- [Next.js](https://nextjs.org/) - React framework
+- [TailwindCSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [Framer Motion](https://www.framer.com/motion/) - Animation library
+- [Orbitport API](https://op.spacecoin.xyz/api) - Cosmic randomness provider
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Spacecoin team for providing the Orbitport API
+- All contributors to the open-source libraries used in this project
