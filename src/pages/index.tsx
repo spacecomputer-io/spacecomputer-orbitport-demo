@@ -152,23 +152,28 @@ export default function Home() {
             />
             <div className="absolute top-[27.8%] left-[37%] w-[28.5%] aspect-[458/201]">
               <button
-                className="absolute inset-0 cursor-pointer disabled:cursor-not-allowed transition-all duration-500 group"
+                className="absolute inset-0 cursor-pointer disabled:cursor-not-allowed transition-all duration-500 group touch-manipulation"
                 onClick={handleLaunch}
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  handleLaunch();
+                }}
                 disabled={isLaunching}
+                aria-label="Launch"
               >
                 <div className="relative w-full h-full">
                   <Image
                     src="/button/button.png"
                     alt="Launch Button"
                     fill
-                    className="object-cover group-active:hidden"
+                    className="object-cover group-active:hidden select-none"
                     priority
                   />
                   <Image
                     src="/button/button-pressed.png"
                     alt="Launch Button Pressed"
                     fill
-                    className="object-cover hidden group-active:block"
+                    className="object-cover hidden group-active:block select-none"
                     priority
                   />
                 </div>
@@ -186,7 +191,7 @@ export default function Home() {
                       repeat: Infinity,
                       repeatType: "reverse",
                     }}
-                    className="absolute top-0 left-1/2 -translate-x-1/2"
+                    className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none"
                   >
                     <ChevronDown className="w-6 h-6 text-white/80" />
                   </motion.div>
