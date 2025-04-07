@@ -1,113 +1,142 @@
+import { useState } from "react";
+import Head from "next/head";
+import { Planet, generatePlanets } from "@/types/planet";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { useOrbitport } from "@/hooks/useOrbitport";
 
 export default function Home() {
+  const [isLaunching, setIsLaunching] = useState(false);
+  const [selectedPlanet, setSelectedPlanet] = useState<Planet | null>(null);
+  const { getRandomSeed } = useOrbitport();
+
+  const handleLaunch = async () => {
+    setIsLaunching(true);
+    try {
+      const randomBytes = await getRandomSeed();
+      const planets = generatePlanets(randomBytes);
+      const randomNum = (randomBytes[0] + (randomBytes[1] << 8)) % 100;
+      const selectedPlanet = planets[randomNum];
+      setSelectedPlanet(selectedPlanet);
+    } catch (error) {
+      console.error("Launch failed:", error);
+      alert("Failed to launch. Please try again!");
+    } finally {
+      setIsLaunching(false);
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <>
+      <Head>
+        <title>Spacecoin Orbitport Demo</title>
+        <meta
+          name="description"
+          content="Demo showcasing the Spacecoin cTRNG functions"
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      </Head>
+
+      <main className="min-h-screen text-white relative overflow-hidden">
+        {/* Stars background */}
+        <div className="absolute inset-0 bg-[url('/stars.svg')] opacity-50 bg-repeat" />
+
+        <div className="container mx-auto px-4 py-8 relative z-10">
+          <div className="flex flex-col items-center justify-center min-h-[80vh] gap-8">
+            <h1 className="text-4xl md:text-6xl font-bold text-center text-white">
+              Cosmic Launch Lottery
+            </h1>
+
+            <AnimatePresence mode="wait">
+              {!selectedPlanet ? (
+                <motion.div
+                  key="launch"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="flex flex-col items-center gap-6"
+                >
+                  <div className="w-48 h-48 md:w-64 md:h-64 relative">
+                    <Image
+                      src="/rocket.svg"
+                      alt="Spaceship"
+                      width={256}
+                      height={256}
+                      className="w-full h-full object-contain"
+                      priority
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleLaunch}
+                    disabled={isLaunching}
+                    className="px-8 py-4 text-lg font-bold rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(147,51,234,0.5)] hover:shadow-[0_0_30px_rgba(147,51,234,0.7)]"
+                  >
+                    {isLaunching ? "Launching..." : "Launch!"}
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="result"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex flex-col items-center gap-6 max-w-md w-full text-center"
+                >
+                  <div className="w-64 h-64 md:w-80 md:h-80 relative">
+                    <div
+                      className="w-full h-full rounded-full overflow-hidden"
+                      style={{ backgroundColor: selectedPlanet.color }}
+                    >
+                      <Image
+                        src={selectedPlanet.image}
+                        alt={selectedPlanet.name}
+                        width={320}
+                        height={320}
+                        className="w-full h-full object-contain animate-float mix-blend-overlay"
+                        priority
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h2 className="text-3xl font-bold">
+                      {selectedPlanet.name}
+                    </h2>
+                    <p className="text-xl font-semibold text-gray-400">
+                      Planet #{selectedPlanet.number}
+                    </p>
+                    <p
+                      className={`text-xl font-semibold ${
+                        selectedPlanet.rarity === "Legendary"
+                          ? "text-yellow-400"
+                          : selectedPlanet.rarity === "Rare"
+                          ? "text-purple-400"
+                          : "text-blue-400"
+                      }`}
+                    >
+                      {selectedPlanet.rarity}
+                    </p>
+                    <p className="text-gray-300">{selectedPlanet.lore}</p>
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedPlanet(null)}
+                    className="px-6 py-3 text-sm font-semibold rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                  >
+                    Launch Again
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="mt-8 text-center text-sm text-gray-400 max-w-md">
+              <p>
+                Powered by real satellites in orbit using Orbitport&apos;s
+                cEDGE/Crypto2 technology for true cosmic randomness.
+              </p>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    </>
   );
 }

@@ -83,14 +83,15 @@ export const generatePlanets = (randomBytes: Uint8Array): Planet[] => {
     );
 
     const planetNumber = i + 1;
-    const imageIndex = (planetBytes[0] % 10) + 1;
+    // Use modulo 12 to select from 12 PNG images
+    const imageIndex = (planetBytes[0] % 12) + 1;
 
     planets.push({
       id: planetNumber,
       name: generatePlanetName(i, planetBytes),
       number: planetNumber,
       rarity: i < 70 ? "Common" : i < 95 ? "Rare" : "Legendary",
-      image: `/planets/planet-${imageIndex}.svg`,
+      image: `/planets/planet-${imageIndex}.png`,
       color: generateRandomColor(planetBytes),
       lore: `A mysterious planet in the cosmic frontier. Planet #${planetNumber} holds secrets yet to be discovered.`,
     });
