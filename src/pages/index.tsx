@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { Planet, generatePlanets, RARITY_COLORS } from "@/types/planet";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { useOrbitport } from "@/hooks/useOrbitport";
 import { toast } from "sonner";
 import {
@@ -11,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ColoredPlanetImage } from "@/components/colored-planet-image";
 
 interface RandomSeedResponse {
   value: string;
@@ -125,7 +125,9 @@ export default function Home() {
                     exit={{ opacity: 0 }}
                     className="text-center"
                   >
-                    <p className="text-lg opacity-80">You&apos;ve discovered</p>
+                    <p className="text-lg opacity-80 mb-4">
+                      You&apos;ve discovered
+                    </p>
                     <h2 className="text-5xl font-bold tracking-wider">
                       {selectedPlanet.name}
                     </h2>
@@ -155,12 +157,11 @@ export default function Home() {
                       }}
                       transition={{ duration: 0.5 }}
                     >
-                      <ColoredPlanetImage
+                      <Image
                         src={planet.image}
                         alt={planet.name}
                         width={100}
                         height={100}
-                        color={planet.color}
                       />
                     </motion.div>
                   ))}
@@ -173,12 +174,11 @@ export default function Home() {
                   className="flex flex-col items-center"
                 >
                   <div className="relative">
-                    <ColoredPlanetImage
+                    <Image
                       src={selectedPlanet.image}
                       alt={selectedPlanet.name}
                       width={200}
                       height={200}
-                      color={selectedPlanet.color}
                       priority
                     />
                     <p

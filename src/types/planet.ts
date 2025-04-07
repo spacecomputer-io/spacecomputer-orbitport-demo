@@ -4,7 +4,6 @@ export interface Planet {
   number: number;
   rarity: "Common" | "Rare" | "Legendary" | "Ultra Rare";
   image: string;
-  color: string;
   lore?: string;
 }
 
@@ -52,21 +51,12 @@ const generatePlanetName = (id: number, randomBytes: Uint8Array): string => {
   return `${prefixes[prefixIndex]} ${suffixes[suffixIndex]} ${randomNum}`;
 };
 
-// Helper to generate random HSL color
-const generateRandomColor = (randomBytes: Uint8Array): string => {
-  // Use different bytes for different color components
-  const hue = Math.floor((randomBytes[4] * 137.508) % 360); // Golden angle approximation
-  const saturation = Math.floor(70 + (randomBytes[5] % 30)); // 70-100%
-  const lightness = Math.floor(40 + (randomBytes[6] % 20)); // 40-60%
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-};
-
 // Generate 100 planets with different rarities
 export const generatePlanets = (randomBytes: Uint8Array): Planet[] => {
   const planets: Planet[] = [];
 
-  // We need 7 bytes per planet, so ensure we have enough bytes
-  const bytesPerPlanet = 7;
+  // We need 4 bytes per planet, so ensure we have enough bytes
+  const bytesPerPlanet = 4;
   const totalBytesNeeded = 100 * bytesPerPlanet;
 
   // If we don't have enough bytes, repeat the sequence
@@ -116,7 +106,6 @@ export const generatePlanets = (randomBytes: Uint8Array): Planet[] => {
       number: planetNumber,
       rarity,
       image,
-      color: generateRandomColor(planetBytes),
       lore:
         rarity === "Ultra Rare"
           ? "The legendary Durian Planet, known for its pungent aroma that can be detected from neighboring galaxies. A delicacy so rare, it appears only to the most fortunate cosmic travelers."
