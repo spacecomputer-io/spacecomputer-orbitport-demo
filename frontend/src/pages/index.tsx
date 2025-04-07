@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import { Planet, generatePlanets } from "@/types/planet";
+import { Planet, generatePlanets, RARITY_COLORS } from "@/types/planet";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useOrbitport } from "@/hooks/useOrbitport";
@@ -92,108 +92,144 @@ export default function Home() {
         />
       </Head>
 
-      <main className="min-h-screen flex flex-col items-center justify-between p-8 relative">
-        {/* Title Section */}
-        <div className="text-center mt-16 mb-8">
-          <h1 className="text-4xl font-bold mb-4">Cosmic Wayfinder</h1>
-          <p className="text-sm opacity-80 max-w-md">
-            Powered by real satellites in orbit using Orbitport&apos;s
-            cEDGE/Crypto2 technology for true cosmic randomness.
-          </p>
-        </div>
-
-        {/* Planets Display */}
-        <div className="relative w-full h-[400px] flex items-center justify-center mb-8">
-          <AnimatePresence>
-            {!selectedPlanet &&
-              planets.map((planet, index) => (
+      <main className="min-h-screen flex flex-col relative">
+        {/* Fixed height container for consistent layout */}
+        <div className="flex-1 flex flex-col">
+          {/* Title Section - Fixed height space */}
+          <div className="h-[180px] flex items-center justify-center">
+            <AnimatePresence>
+              {!selectedPlanet && !isLaunching && (
                 <motion.div
-                  key={`${planet.id}-${index}`}
-                  className={`absolute ${index === 2 ? "z-10" : "z-0"}`}
-                  initial={{ x: 0 }}
-                  animate={{
-                    x: (index - 2) * 150,
-                    scale: index === 2 ? 1.5 : 1,
-                    filter: isLaunching ? "blur(0px)" : "blur(4px)",
-                  }}
-                  transition={{ duration: 0.5 }}
+                  initial={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-center"
                 >
-                  <Image
-                    src={planet.image}
-                    alt={planet.name}
-                    width={100}
-                    height={100}
-                    className="rounded-full"
-                  />
+                  <h1 className="text-4xl font-bold mb-4">Cosmic Wayfinder</h1>
+                  <p className="text-sm opacity-80 max-w-md">
+                    Powered by real satellites in orbit using Orbitport&apos;s
+                    cEDGE/Crypto2 technology for true cosmic randomness.
+                  </p>
                 </motion.div>
-              ))}
-          </AnimatePresence>
+              )}
+            </AnimatePresence>
+          </div>
 
-          {/* Selected Planet Overlay */}
-          {selectedPlanet && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="absolute inset-0 flex flex-col items-center justify-center text-center"
-            >
-              <p className="text-lg mb-2 opacity-80">You&apos;ve discovered</p>
-              <h2 className="text-5xl font-bold mb-8 tracking-wider">
-                {selectedPlanet.name}
-              </h2>
-              <Image
-                src={selectedPlanet.image}
-                alt={selectedPlanet.name}
-                width={200}
-                height={200}
-                className="mb-8"
-                priority
-              />
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="px-6 py-2 bg-white/10 rounded-md hover:bg-white/20 transition-colors border border-white/20">
-                    View Random Seed
-                  </button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Random Seed Details</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <p>
-                      This planet was discovered using true random data from
-                      satellites in orbit.
-                    </p>
-                    <div className="bg-white/20 p-4 rounded-md font-mono text-sm break-all">
-                      {randomSeed || "No seed available"}
-                    </div>
-                    <p className="text-sm opacity-80">
-                      Source: Orbitport cEDGE/Crypto2 Satellite Network
-                    </p>
+          {/* Planets Display - Always centered */}
+          <div className="flex-1 flex items-center justify-center">
+            <div className="relative w-full flex justify-center">
+              {/* Initial Planets */}
+              <AnimatePresence>
+                {!selectedPlanet && (
+                  <div className="flex items-center justify-center gap-8">
+                    {planets.map((planet, index) => (
+                      <motion.div
+                        key={`${planet.id}-${index}`}
+                        initial={{ opacity: 1 }}
+                        animate={{
+                          scale: index === 2 ? 1.5 : 1,
+                          filter: isLaunching ? "blur(0px)" : "blur(4px)",
+                        }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <Image
+                          src={planet.image}
+                          alt={planet.name}
+                          width={100}
+                          height={100}
+                          className="rounded-full"
+                        />
+                      </motion.div>
+                    ))}
                   </div>
-                </DialogContent>
-              </Dialog>
-            </motion.div>
-          )}
+                )}
+              </AnimatePresence>
+
+              {/* Selected Planet Overlay */}
+              <AnimatePresence>
+                {selectedPlanet && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex flex-col items-center text-center"
+                  >
+                    <p className="text-lg mb-2 opacity-80">
+                      You&apos;ve discovered
+                    </p>
+                    <h2 className="text-5xl font-bold mb-8 tracking-wider">
+                      {selectedPlanet.name}
+                    </h2>
+                    <div className="relative mb-8">
+                      <Image
+                        src={selectedPlanet.image}
+                        alt={selectedPlanet.name}
+                        width={200}
+                        height={200}
+                        priority
+                      />
+                      <p
+                        className={`text-sm font-semibold mt-2 ${
+                          RARITY_COLORS[selectedPlanet.rarity]
+                        }`}
+                      >
+                        {selectedPlanet.rarity}
+                      </p>
+                    </div>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button className="px-6 py-2 bg-white/10 rounded-md hover:bg-white/20 transition-colors border border-white/20">
+                          View Random Seed
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Random Seed Details</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <p>{selectedPlanet.lore}</p>
+                          <div className="bg-black/20 p-4 rounded-md font-mono text-sm break-all">
+                            {randomSeed || "No seed available"}
+                          </div>
+                          <p className="text-sm opacity-80">
+                            Source: Orbitport cEDGE/Crypto2 Satellite Network
+                          </p>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
 
         {/* Console */}
-        <div className="relative w-full max-w-2xl">
-          <Image
-            src="/console.png"
-            alt="Control Console"
-            width={800}
-            height={300}
-            className="w-full"
-          />
-          <button
-            onClick={handleLaunch}
-            disabled={isLaunching}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                       text-2xl font-bold text-orange-300 hover:text-orange-400 
-                       transition-colors disabled:opacity-50"
-          >
-            LAUNCH
-          </button>
+        <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-8">
+          <div className="relative w-full max-w-2xl">
+            <Image
+              src="/console.png"
+              alt="Control Console"
+              width={800}
+              height={300}
+              className="w-full"
+            />
+            {/* Desktop Launch Area (invisible button) */}
+            <div
+              className="absolute hidden md:block top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                        w-[200px] h-[60px] cursor-pointer"
+              onClick={!isLaunching ? handleLaunch : undefined}
+              style={{ opacity: isLaunching ? 0.5 : 1 }}
+            />
+            {/* Mobile Launch Button */}
+            <button
+              onClick={handleLaunch}
+              disabled={isLaunching}
+              className="md:hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                       text-2xl font-bold text-white px-8 py-3 rounded-md
+                       bg-[#C73314] disabled:opacity-50 transition-opacity"
+            >
+              LAUNCH
+            </button>
+          </div>
         </div>
       </main>
     </>

@@ -2,7 +2,7 @@ export interface Planet {
   id: number;
   name: string;
   number: number;
-  rarity: "Common" | "Rare" | "Legendary";
+  rarity: "Common" | "Rare" | "Legendary" | "Ultra Rare";
   image: string;
   color: string;
   lore?: string;
@@ -12,6 +12,7 @@ export const RARITY_COLORS = {
   Common: "text-blue-400",
   Rare: "text-purple-400",
   Legendary: "text-yellow-400",
+  "Ultra Rare": "text-green-400",
 } as const;
 
 // Helper to generate planet names
@@ -83,17 +84,43 @@ export const generatePlanets = (randomBytes: Uint8Array): Planet[] => {
     );
 
     const planetNumber = i + 1;
-    // Use modulo 12 to select from 12 PNG images
-    const imageIndex = (planetBytes[0] % 12) + 1;
+
+    // Determine rarity and image
+    let rarity: Planet["rarity"];
+    let image: string;
+
+    // Use first byte for rarity determination
+    const rarityRoll = planetBytes[0] % 100;
+
+    if (rarityRoll < 1) {
+      // 1% chance for Ultra Rare
+      rarity = "Ultra Rare";
+      image = "/planets/durian.png";
+    } else if (rarityRoll < 6) {
+      // 5% chance for Legendary
+      rarity = "Legendary";
+      image = `/planets/planet-${(planetBytes[0] % 12) + 1}.png`;
+    } else if (rarityRoll < 31) {
+      // 25% chance for Rare
+      rarity = "Rare";
+      image = `/planets/planet-${(planetBytes[0] % 12) + 1}.png`;
+    } else {
+      // 69% chance for Common
+      rarity = "Common";
+      image = `/planets/planet-${(planetBytes[0] % 12) + 1}.png`;
+    }
 
     planets.push({
       id: planetNumber,
       name: generatePlanetName(i, planetBytes),
       number: planetNumber,
-      rarity: i < 70 ? "Common" : i < 95 ? "Rare" : "Legendary",
-      image: `/planets/planet-${imageIndex}.png`,
+      rarity,
+      image,
       color: generateRandomColor(planetBytes),
-      lore: `A mysterious planet in the cosmic frontier. Planet #${planetNumber} holds secrets yet to be discovered.`,
+      lore:
+        rarity === "Ultra Rare"
+          ? "The legendary Durian Planet, known for its pungent aroma that can be detected from neighboring galaxies. A delicacy so rare, it appears only to the most fortunate cosmic travelers."
+          : `A mysterious planet in the cosmic frontier. Planet #${planetNumber} holds secrets yet to be discovered.`,
     });
   }
 
