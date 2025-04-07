@@ -109,10 +109,10 @@ export default function Home() {
                     exit={{ opacity: 0 }}
                     className="text-center"
                   >
-                    <p className="text-lg opacity-80 mb-4">
+                    <p className="text-base lg:text-lg opacity-80 mb-2 lg:mb-4">
                       You&apos;ve discovered
                     </p>
-                    <h2 className="text-5xl font-bold tracking-wider">
+                    <h2 className="text-2xl lg:text-5xl font-bold tracking-wider">
                       {selectedPlanet.name}
                     </h2>
                   </motion.div>
@@ -123,7 +123,7 @@ export default function Home() {
         </div>
 
         {/* Planets Section */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10 w-full px-6">
           <div className="relative flex justify-center items-center h-[200px]">
             <AnimatePresence mode="wait">
               {!selectedPlanet ? (
@@ -143,7 +143,7 @@ export default function Home() {
           <div className="relative w-full max-w-2xl">
             <img src="/console.png" alt="Control Console" className="w-full" />
             <button
-              className="absolute top-[27.8%] left-[37.2%] w-[190px] h-[84px] cursor-pointer disabled:cursor-not-allowed transition-opacity group"
+              className="absolute top-[27.8%] left-[37%] w-[28.5%] aspect-[458/201] cursor-pointer disabled:cursor-not-allowed transition-opacity group"
               onClick={handleLaunch}
               disabled={isLaunching}
             >

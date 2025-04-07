@@ -48,7 +48,7 @@ export default function SelectedPlanet({
       >
         <Dialog>
           <DialogTrigger asChild>
-            <button className="px-6 py-2 bg-white/10 rounded-md hover:bg-white/20 transition-colors border border-white/20 cursor-pointer">
+            <button className="px-4 lg:px-6 py-2 bg-white/10 rounded-md hover:bg-white/20 transition-colors border border-white/20 cursor-pointer w-max">
               View Random Seed
             </button>
           </DialogTrigger>
