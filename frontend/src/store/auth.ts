@@ -15,8 +15,8 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       expiresAt: null,
       setToken: (token: string, expiresIn: number) => {
-        // Calculate expiry time (with 5 minute buffer)
-        const expiresAt = Date.now() + (expiresIn - 300) * 1000;
+        // Calculate expiry time (with 1 minute buffer)
+        const expiresAt = Date.now() + (expiresIn - 60) * 1000;
         set({ accessToken: token, expiresAt });
       },
       clearToken: () => set({ accessToken: null, expiresAt: null }),
