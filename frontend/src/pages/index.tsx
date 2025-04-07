@@ -34,7 +34,9 @@ export default function Home() {
 
   // Generate initial blurred planets
   useEffect(() => {
-    const dummyBytes = new Uint8Array(32).fill(1); // Fill with 1s for consistent initial state
+    // Generate random initial bytes
+    const dummyBytes = new Uint8Array(32);
+    crypto.getRandomValues(dummyBytes);
     const initialPlanets = generatePlanets(dummyBytes);
     setPlanets(initialPlanets.slice(0, 5));
   }, []);
@@ -92,7 +94,7 @@ export default function Home() {
 
       <main className="min-h-screen flex flex-col items-center justify-between p-8 relative">
         {/* Title Section */}
-        <div className="text-center mb-8">
+        <div className="text-center mt-16 mb-8">
           <h1 className="text-4xl font-bold mb-4">Cosmic Wayfinder</h1>
           <p className="text-sm opacity-80 max-w-md">
             Powered by real satellites in orbit using Orbitport&apos;s
@@ -161,7 +163,7 @@ export default function Home() {
                       This planet was discovered using true random data from
                       satellites in orbit.
                     </p>
-                    <div className="bg-black/20 p-4 rounded-md font-mono text-sm break-all">
+                    <div className="bg-white/20 p-4 rounded-md font-mono text-sm break-all">
                       {randomSeed || "No seed available"}
                     </div>
                     <p className="text-sm opacity-80">
