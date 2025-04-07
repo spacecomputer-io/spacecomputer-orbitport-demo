@@ -21,6 +21,7 @@ export default async function handler(
     });
 
     if (!response.ok) {
+      console.error("Failed to get random seed:", response);
       throw new Error("Failed to get random seed");
     }
 

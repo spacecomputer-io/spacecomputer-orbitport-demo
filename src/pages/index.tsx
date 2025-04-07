@@ -8,12 +8,6 @@ import { toast } from "sonner";
 import SelectedPlanet from "@/components/SelectedPlanet";
 import PlanetGrid from "@/components/PlanetGrid";
 
-interface RandomSeedResponse {
-  value: string;
-  sig: string;
-  src: string;
-}
-
 // Helper to convert hex string to Uint8Array
 const hexStringToUint8Array = (hexString: string): Uint8Array => {
   const pairs = hexString.match(/[\dA-F]{2}/gi) || [];
@@ -34,10 +28,7 @@ export default function Home() {
     crypto.getRandomValues(dummyBytes);
     const initialPlanets = generatePlanets(dummyBytes);
     setPlanets(initialPlanets.slice(0, 5));
-
-    const animBytes = new Uint8Array(32);
-    crypto.getRandomValues(animBytes);
-    setAnimationPlanets(generatePlanets(animBytes));
+    setAnimationPlanets(initialPlanets);
   }, []);
 
   const handleLaunch = async () => {
@@ -47,7 +38,7 @@ export default function Home() {
 
     try {
       toast.loading("Retrieving cosmic random seed...");
-      const response = (await getRandomSeed()) as RandomSeedResponse;
+      const response = await getRandomSeed();
       toast.dismiss();
 
       setRandomSeed(response.value);

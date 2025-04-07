@@ -33,6 +33,7 @@ export default async function handler(
     });
 
     if (!response.ok) {
+      console.error("Failed to get access token:", response);
       throw new Error("Failed to get access token");
     }
 
