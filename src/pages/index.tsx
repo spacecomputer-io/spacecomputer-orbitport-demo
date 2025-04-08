@@ -57,7 +57,7 @@ export default function Home() {
           animationIndex += 1;
           return newSet;
         });
-      }, 100);
+      }, 150); // Optimized for mobile performance
 
       // Stop roulette and show final planet
       setTimeout(() => {
@@ -66,7 +66,7 @@ export default function Home() {
         setSelectedPlanet(selectedPlanet);
         setPlanets(newPlanets.slice(0, 5));
         setIsLaunching(false);
-      }, 2000);
+      }, 2500); // Longer duration for smoother animation
     } catch (error) {
       console.error("Launch failed:", error);
       toast.error("Failed to retrieve random seed");

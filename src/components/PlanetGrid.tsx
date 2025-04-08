@@ -29,6 +29,9 @@ export default function PlanetGrid({ planets, isLaunching }: PlanetGridProps) {
             alt={planet.name}
             width={100}
             height={100}
+            priority
+            quality={75}
+            loading="eager"
           />
         </motion.div>
       ))}
