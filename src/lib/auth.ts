@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import crypto from "crypto";
-import cookie from "cookie";
+import * as cookie from "cookie";
 
 const AUTH_SECRET = (
   process.env.AUTH_SECRET || "dev_secret_32_bytes_long_for_demo"
@@ -105,55 +105,63 @@ export async function getValidToken(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<string | null> {
-  const cookies = cookie.parse(req.headers.cookie || "");
-  const encryptedToken = cookies[COOKIE_NAME];
-  let accessToken: string | null = null;
-  let tokenExp = 0;
+  try {
+    // 1. Parse cookies
+    const cookies = req.headers.cookie ? cookie.parse(req.headers.cookie) : {};
+    const encryptedToken = cookies[COOKIE_NAME];
 
-  if (encryptedToken) {
-    const decrypted = decrypt(encryptedToken);
-    const parsed = parseToken(decrypted);
-    if (parsed) {
-      const now = Math.floor(Date.now() / 1000);
-      // Only use token if not expired and not about to expire
-      if (parsed.exp > now + TOKEN_EXPIRE_BUFFER) {
-        accessToken = parsed.access_token;
-        tokenExp = parsed.exp;
-      } else {
-        console.log("Token expired or about to expire");
+    let accessToken: string | null = null;
+    let tokenExp = 0;
+
+    if (encryptedToken) {
+      const decrypted = decrypt(encryptedToken);
+      const parsed = parseToken(decrypted);
+
+      if (parsed) {
+        const now = Math.floor(Date.now() / 1000);
+        // Only use token if not expired and not about to expire
+        if (parsed.exp > now + TOKEN_EXPIRE_BUFFER) {
+          accessToken = parsed.access_token;
+          tokenExp = parsed.exp;
+        } else {
+          console.log("Token expired or about to expire");
+        }
       }
     }
-  }
 
-  // 2. If no valid token, get new one from Orbitport
-  if (!accessToken) {
-    accessToken = await getNewAccessToken();
+    // 2. If no valid token, get new one from Orbitport
     if (!accessToken) {
-      console.error("Failed to get new access token");
-      return null;
+      accessToken = await getNewAccessToken();
+      if (!accessToken) {
+        console.error("Failed to get new access token");
+        return null;
+      }
+
+      // parse exp from JWT
+      const parsed = parseToken(accessToken);
+      if (!parsed) {
+        console.error("Failed to parse new token");
+        return null;
+      }
+      tokenExp = parsed.exp;
+
+      // Encrypt and set cookie
+      const encrypted = encrypt(accessToken);
+      res.setHeader(
+        "Set-Cookie",
+        cookie.serialize(COOKIE_NAME, encrypted, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          maxAge: tokenExp - Math.floor(Date.now() / 1000),
+        })
+      );
     }
 
-    // parse exp from JWT
-    const parsed = parseToken(accessToken);
-    if (!parsed) {
-      console.error("Failed to parse new token");
-      return null;
-    }
-    tokenExp = parsed.exp;
-
-    // Encrypt and set cookie
-    const encrypted = encrypt(accessToken);
-    res.setHeader(
-      "Set-Cookie",
-      cookie.serialize(COOKIE_NAME, encrypted, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        maxAge: tokenExp - Math.floor(Date.now() / 1000),
-      })
-    );
+    return accessToken;
+  } catch (error) {
+    console.error("Error in getValidToken:", error);
+    return null;
   }
-
-  return accessToken;
 }
