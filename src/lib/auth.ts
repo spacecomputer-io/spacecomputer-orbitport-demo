@@ -8,7 +8,7 @@ const AUTH_SECRET = (
   .padEnd(32, "!")
   .slice(0, 32);
 const COOKIE_NAME = "orbitport_token";
-const TOKEN_EXPIRE_BUFFER = 86400; // seconds, refresh token if expiring soon
+const TOKEN_EXPIRE_BUFFER = 60; // Refresh token if expiring within this buffer
 
 interface TokenData {
   access_token: string;
@@ -105,7 +105,6 @@ export async function getValidToken(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<string | null> {
-  // 1. Parse cookies
   const cookies = cookie.parse(req.headers.cookie || "");
   const encryptedToken = cookies[COOKIE_NAME];
   let accessToken: string | null = null;
@@ -120,6 +119,8 @@ export async function getValidToken(
       if (parsed.exp > now + TOKEN_EXPIRE_BUFFER) {
         accessToken = parsed.access_token;
         tokenExp = parsed.exp;
+      } else {
+        console.log("Token expired or about to expire");
       }
     }
   }
@@ -128,12 +129,14 @@ export async function getValidToken(
   if (!accessToken) {
     accessToken = await getNewAccessToken();
     if (!accessToken) {
+      console.error("Failed to get new access token");
       return null;
     }
 
     // parse exp from JWT
     const parsed = parseToken(accessToken);
     if (!parsed) {
+      console.error("Failed to parse new token");
       return null;
     }
     tokenExp = parsed.exp;
