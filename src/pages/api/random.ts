@@ -1,4 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { getValidToken } from "@/lib/auth";
+
+const ORBITPORT_API_URL = process.env.ORBITPORT_API_URL;
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,29 +11,38 @@ export default async function handler(
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const apiUrl = process.env.ORBITPORT_API_URL;
-  if (!apiUrl) {
+  if (!ORBITPORT_API_URL) {
     return res.status(500).json({ message: "Missing Orbitport API URL" });
   }
 
+  // Get valid token using our auth utility
+  const accessToken = await getValidToken(req, res);
+  if (!accessToken) {
+    return res.status(401).json({ message: "Authentication failed" });
+  }
+
+  // Call downstream API with access token
   try {
-    const response = await fetch(`${apiUrl}/api/v1/rand_seed`, {
+    const response = await fetch(`${ORBITPORT_API_URL}/api/v1/rand_seed`, {
       headers: {
-        Authorization: req.headers.authorization || "",
+        Authorization: `Bearer ${accessToken}`,
       },
     });
 
     if (!response.ok) {
-      console.error("Failed to get random seed:", response);
-      throw new Error("Failed to get random seed");
+      const errorText = await response.text();
+      return res
+        .status(502)
+        .json({ message: "Failed to get random seed", error: errorText });
     }
 
     const data = await response.json();
     return res.status(200).json(data);
-  } catch (error) {
-    console.error("Error:", error);
+  } catch (err) {
+    console.error("Error:", err);
     return res.status(500).json({
       message: "Failed to get random seed",
+      error: err instanceof Error ? err.message : "Unknown error",
     });
   }
 }
