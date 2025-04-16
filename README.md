@@ -41,8 +41,9 @@ yarn install
 ```env
 ORBITPORT_API_URL=https://dev-1usujmbby8627ni8.us.auth0.com
 ORBITPORT_AUTH_URL=https://op.spacecoin.xyz
-OP_CLIENT_ID=your-client-id
-OP_CLIENT_SECRET=your-client-secret
+ORBITPORT_CLIENT_ID=your-client-id
+ORBITPORT_CLIENT_SECRET=your-client-secret
+AUTH_SECRET= # 32 bytes long secret
 ```
 
 4. Start the development server:
