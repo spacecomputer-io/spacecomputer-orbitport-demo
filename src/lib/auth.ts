@@ -81,6 +81,40 @@ function parseToken(token: string | null): TokenData | null {
 }
 
 /**
+ * Retrieves the encrypted token from request cookies.
+ * @param req - Next.js API request object
+ * @returns The encrypted token string, or null if not found
+ */
+function getEncryptedTokenFromCookies(req: NextApiRequest): string | null {
+  const cookies = req.headers.cookie ? cookie.parse(req.headers.cookie) : {};
+  return cookies[COOKIE_NAME] || null;
+}
+
+/**
+ * Sets the encrypted access token as an HTTP-only cookie in the response.
+ * @param res - Next.js API response object
+ * @param token - The access token to encrypt and set
+ * @param exp - Expiration time (epoch seconds) of the token
+ */
+function setEncryptedTokenCookie(
+  res: NextApiResponse,
+  token: string,
+  exp: number
+): void {
+  const encrypted = encrypt(token);
+  res.setHeader(
+    "Set-Cookie",
+    cookie.serialize(COOKIE_NAME, encrypted, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: exp - Math.floor(Date.now() / 1000),
+    })
+  );
+}
+
+/**
  * Requests a new access token from the Orbitport API using client credentials.
  *
  * @returns The access token string, or null if the request fails.
@@ -119,40 +153,6 @@ async function generateAccessToken(): Promise<string | null> {
     console.error("Error getting access token:", error);
     return null;
   }
-}
-
-/**
- * Retrieves the encrypted token from request cookies.
- * @param req - Next.js API request object
- * @returns The encrypted token string, or null if not found
- */
-function getEncryptedTokenFromCookies(req: NextApiRequest): string | null {
-  const cookies = req.headers.cookie ? cookie.parse(req.headers.cookie) : {};
-  return cookies[COOKIE_NAME] || null;
-}
-
-/**
- * Sets the encrypted access token as an HTTP-only cookie in the response.
- * @param res - Next.js API response object
- * @param token - The access token to encrypt and set
- * @param exp - Expiration time (epoch seconds) of the token
- */
-function setEncryptedTokenCookie(
-  res: NextApiResponse,
-  token: string,
-  exp: number
-): void {
-  const encrypted = encrypt(token);
-  res.setHeader(
-    "Set-Cookie",
-    cookie.serialize(COOKIE_NAME, encrypted, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: exp - Math.floor(Date.now() / 1000),
-    })
-  );
 }
 
 /**
