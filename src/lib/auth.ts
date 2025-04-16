@@ -121,38 +121,7 @@ function setEncryptedTokenCookie(
  * @throws Error if required authentication configuration is missing.
  */
 async function generateAccessToken(): Promise<string | null> {
-  const clientId = process.env.ORBITPORT_CLIENT_ID;
-  const clientSecret = process.env.ORBITPORT_CLIENT_SECRET;
-  const authUrl = process.env.ORBITPORT_AUTH_URL;
-
-  if (!clientId || !clientSecret || !authUrl) {
-    throw new Error("Missing Orbitport authentication configuration");
-  }
-
-  try {
-    const response = await fetch(`${authUrl}/oauth/token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        client_id: clientId,
-        client_secret: clientSecret,
-        audience: "https://op.spacecoin.xyz/api",
-        grant_type: "client_credentials",
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to get access token");
-    }
-
-    const data = await response.json();
-    return data.access_token;
-  } catch (error) {
-    console.error("Error getting access token:", error);
-    return null;
-  }
+  // Add your code here
 }
 
 /**
@@ -167,42 +136,5 @@ export async function getValidToken(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<string | null> {
-  try {
-    const encryptedToken = getEncryptedTokenFromCookies(req);
-    let accessToken: string | null = null;
-
-    if (encryptedToken) {
-      const decrypted = decrypt(encryptedToken);
-      const parsed = parseToken(decrypted);
-      if (parsed) {
-        const now = Math.floor(Date.now() / 1000);
-        // Only use token if not expired and not about to expire
-        if (parsed.exp > now + TOKEN_EXPIRE_BUFFER) {
-          accessToken = parsed.access_token;
-        } else {
-          console.log("Token expired or about to expire");
-        }
-      }
-    }
-
-    // If no valid token, generate a new one
-    if (!accessToken) {
-      accessToken = await generateAccessToken();
-      if (!accessToken) {
-        console.error("Failed to get new access token");
-        return null;
-      }
-      const parsed = parseToken(accessToken);
-      if (!parsed) {
-        console.error("Failed to parse new token");
-        return null;
-      }
-      setEncryptedTokenCookie(res, accessToken, parsed.exp);
-    }
-
-    return accessToken;
-  } catch (error) {
-    console.error("Error in getValidToken:", error);
-    return null;
-  }
+  // Add your code here
 }
