@@ -124,7 +124,7 @@ async function generateAccessToken(): Promise<string | null> {
   const clientId = process.env.ORBITPORT_CLIENT_ID;
   const clientSecret = process.env.ORBITPORT_CLIENT_SECRET;
   const authUrl = process.env.ORBITPORT_AUTH_URL;
-
+  const apiUrl = process.env.ORBITPORT_API_URL;
   if (!clientId || !clientSecret || !authUrl) {
     throw new Error("Missing Orbitport authentication configuration");
   }
@@ -138,7 +138,7 @@ async function generateAccessToken(): Promise<string | null> {
       body: JSON.stringify({
         client_id: clientId,
         client_secret: clientSecret,
-        audience: "https://op.spacecoin.xyz/api",
+        audience: `${apiUrl}/api`,
         grant_type: "client_credentials",
       }),
     });

@@ -24,8 +24,8 @@ A cosmic-themed lottery application that demonstrates the use of Orbitport's cTR
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/easonchai/spacecoin-orbitport.git
-cd spacecoin-orbitport
+git clone https://github.com/spacecomputerio/spacecomputer-orbitport-demo.git
+cd spacecomputer-orbitport-demo
 ```
 
 2. Install dependencies:
