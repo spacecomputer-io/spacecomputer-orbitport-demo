@@ -1,7 +1,7 @@
 CONTAINER_TOOL?=docker ## Container tool to use (docker or nerdctl)
 DOCKER_TAG?=latest ## Docker image tag (e.g., v1.0.0)
 DOCKER_IMAGE?=op-ui
-DOCKER_CONTAINER_NAME?=ui-demo
+DOCKER_CONTAINER_NAME?=ui
 
 docker-build:
 	@${CONTAINER_TOOL} build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
@@ -10,7 +10,7 @@ docker-clean:
 	$(CONTAINER_TOOL) rm -f $(DOCKER_CONTAINER_NAME) 2> /dev/null
 
 docker-run: docker-clean docker-build
-	@${CONTAINER_TOOL} run -p 3000:3000 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE}:${DOCKER_TAG}
+	@${CONTAINER_TOOL} run -p 3000:3000 -v .env:/.env --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE}:${DOCKER_TAG}
 
 # Show help message
 help:

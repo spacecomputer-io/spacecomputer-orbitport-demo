@@ -1,4 +1,4 @@
-# Cosmic Wayfinder - Spacecoin Orbitport Integration Demo
+# Cosmic Wayfinder - SpaceComputer Orbitport Integration Demo
 
 A cosmic-themed lottery application that demonstrates the use of Orbitport's cTRNG (cosmic True Random Number Generator) API. Users can "launch" to discover random planets, with each planet's selection powered by true cosmic randomness from satellites in orbit.
 
@@ -40,7 +40,7 @@ yarn install
 
 ```env
 ORBITPORT_API_URL=https://dev-1usujmbby8627ni8.us.auth0.com
-ORBITPORT_AUTH_URL=https://op.spacecoin.xyz
+ORBITPORT_AUTH_URL=https://op.spacecomputer.io
 ORBITPORT_CLIENT_ID=your-client-id
 ORBITPORT_CLIENT_SECRET=your-client-secret
 AUTH_SECRET= # 32 bytes long secret
@@ -83,11 +83,14 @@ The application uses a Next.js API route to securely communicate with Orbitport'
 // Example API route implementation
 export async function GET() {
   const token = await getOrbitportToken();
-  const response = await fetch("https://op.spacecoin.xyz/api/v1/rand_seed", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await fetch(
+    "https://op.spacecomputer/api/v1/services/trng",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return response.json();
 }
 ```
@@ -97,7 +100,7 @@ export async function GET() {
 - [Next.js](https://nextjs.org/) - React framework
 - [TailwindCSS](https://tailwindcss.com/) - Utility-first CSS framework
 - [Framer Motion](https://www.framer.com/motion/) - Animation library
-- [Orbitport API](https://op.spacecoin.xyz/api) - Cosmic randomness provider
+- [Orbitport API](https://op.spacecomputer.io/api) - Cosmic randomness provider
 
 ## 📝 License
 
@@ -105,5 +108,5 @@ This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- Spacecoin team for providing the Orbitport API
+- SpaceComputer team for providing the Orbitport API
 - All contributors to the open-source libraries used in this project

@@ -23,7 +23,7 @@ export default async function handler(
     }
 
     // Call downstream API with access token
-    const response = await fetch(`${ORBITPORT_API_URL}/api/v1/rand_seed`, {
+    const response = await fetch(`${ORBITPORT_API_URL}/api/v1/services/trng`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
