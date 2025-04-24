@@ -42,8 +42,8 @@ export default function Home() {
       const response = await getRandomSeed();
       toast.dismiss();
 
-      setRandomSeed(response.value);
-      const bytes = hexStringToUint8Array(response.value);
+      setRandomSeed(response.data);
+      const bytes = hexStringToUint8Array(response.data);
       const newPlanets = generatePlanets(bytes);
 
       // Start roulette animation

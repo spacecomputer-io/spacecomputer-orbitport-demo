@@ -1,9 +1,14 @@
 import { useCallback } from "react";
 
 interface RandomSeedResponse {
-  value: string;
-  sig: string;
+  service: string;
   src: string;
+  data: string;
+  signature: {
+    value: string;
+    pk: string;
+    algo: string;
+  };
 }
 
 export function useOrbitport() {
