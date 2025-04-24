@@ -77,10 +77,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Spacecoin Orbitport Demo</title>
+        <title>SpaceComputer Orbitport Demo</title>
         <meta
           name="description"
-          content="Demo showcasing the Spacecoin cTRNG functions"
+          content="Demo showcasing the SpaceComputer cTRNG functions"
         />
       </Head>
 
