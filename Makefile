@@ -1,7 +1,7 @@
 CONTAINER_TOOL?=docker ## Container tool to use (docker or nerdctl)
 DOCKER_TAG?=latest ## Docker image tag (e.g., v1.0.0)
-DOCKER_IMAGE?=op-ui
-DOCKER_CONTAINER_NAME?=ui
+DOCKER_IMAGE?=wayfinder
+DOCKER_CONTAINER_NAME?=wayfinder-ui
 
 docker-build:
 	@${CONTAINER_TOOL} build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
