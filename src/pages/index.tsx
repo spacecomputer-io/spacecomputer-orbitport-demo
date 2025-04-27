@@ -42,8 +42,8 @@ export default function Home() {
       const response = await getRandomSeed();
       toast.dismiss();
 
-      setRandomSeed(response.value);
-      const bytes = hexStringToUint8Array(response.value);
+      setRandomSeed(response.data);
+      const bytes = hexStringToUint8Array(response.data);
       const newPlanets = generatePlanets(bytes);
 
       // Start roulette animation
@@ -77,10 +77,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Spacecoin Orbitport Demo</title>
+        <title>SpaceComputer Orbitport Demo</title>
         <meta
           name="description"
-          content="Demo showcasing the Spacecoin cTRNG functions"
+          content="Demo showcasing the SpaceComputer cTRNG functions"
         />
       </Head>
 
