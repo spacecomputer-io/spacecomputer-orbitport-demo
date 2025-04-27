@@ -82,15 +82,28 @@ The application uses a Next.js API route to securely communicate with Orbitport'
 ```typescript
 // Example API route implementation
 export async function GET() {
-  const token = await getOrbitportToken();
-  const response = await fetch(
-    "https://op.spacecomputer/api/v1/services/trng",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  // First, get the OAuth token from the Orbitport auth URL
+  const authResponse = await fetch(`${ORBITPORT_AUTH_URL}/oauth/token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      client_id: ORBITPORT_CLIENT_ID,
+      client_secret: ORBITPORT_CLIENT_SECRET,
+      audience: `${ORBITPORT_API_URL}/api`,
+      grant_type: "client_credentials",
+    }),
+  });
+
+  const data = await authResponse.json();
+  const token = data.access_token;
+
+  const response = await fetch(`${ORBITPORT_API_URL}/api/v1/services/trng`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.json();
 }
 ```
