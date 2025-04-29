@@ -27,7 +27,7 @@ export default function SelectedPlanet({
     >
       <div className="relative">
         <Image
-          src={planet.image}
+          src={`/wayfinder/${planet.image}`}
           alt={planet.name}
           width={200}
           height={200}

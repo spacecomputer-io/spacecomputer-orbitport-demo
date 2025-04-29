@@ -25,7 +25,7 @@ export default function PlanetGrid({ planets, isLaunching }: PlanetGridProps) {
           className="relative p-1"
         >
           <Image
-            src={planet.image}
+            src={`/wayfinder/${planet.image}`}
             alt={planet.name}
             width={100}
             height={100}
