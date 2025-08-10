@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "https://deno.land/": "./deno.land/",
+    "https://v1-7-0--edge-utils.netlify.app/": "./v1-7-0--edge-utils.netlify.app/"
+  }
+}

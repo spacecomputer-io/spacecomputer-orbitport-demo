@@ -1,0 +1,20 @@
+{
+	"geolocation": {
+		"data": {
+			"city": "Kuala Lumpur",
+			"country": {
+				"code": "MY",
+				"name": "Malaysia"
+			},
+			"subdivision": {
+				"code": "14",
+				"name": "Kuala Lumpur"
+			},
+			"timezone": "Asia/Kuala_Lumpur",
+			"latitude": 3.1408,
+			"longitude": 101.6852,
+			"postalCode": "50515"
+		},
+		"timestamp": 1754813471339
+	}
+}
