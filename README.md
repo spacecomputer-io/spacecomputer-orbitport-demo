@@ -24,7 +24,7 @@ A cosmic-themed lottery application that demonstrates the use of Orbitport's cTR
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/spacecomputerio/spacecomputer-orbitport-demo.git
+git clone https://github.com/spacecomputer-io/spacecomputer-orbitport-demo.git
 cd spacecomputer-orbitport-demo
 ```
 
