@@ -14,7 +14,7 @@ interface RandomSeedResponse {
 export function useOrbitport() {
   const getRandomSeed = useCallback(async (): Promise<RandomSeedResponse> => {
     try {
-      const response = await fetch("/wayfinder/api/random");
+      const response = await fetch("/api/random");
       if (!response.ok) {
         throw new Error("Failed to get random seed");
       }

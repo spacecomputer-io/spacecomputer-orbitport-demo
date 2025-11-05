@@ -143,7 +143,7 @@ export default function Home() {
         <div className="fixed bottom-0 left-0 right-0 flex justify-center">
           <div className="relative w-full max-w-2xl">
             <Image
-              src={`/wayfinder/console.png`}
+              src={`/console.png`}
               alt="Control Console"
               width={1200}
               height={600}
@@ -163,14 +163,14 @@ export default function Home() {
               >
                 <div className="relative w-full h-full">
                   <Image
-                    src={`/wayfinder/button/button.png`}
+                    src={`/button/button.png`}
                     alt="Launch Button"
                     fill
                     className="object-cover group-active:hidden select-none"
                     priority
                   />
                   <Image
-                    src={`/wayfinder/button/button-pressed.png`}
+                    src={`/button/button-pressed.png`}
                     alt="Launch Button Pressed"
                     fill
                     className="object-cover hidden group-active:block select-none"
